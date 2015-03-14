@@ -41,6 +41,8 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering.cs" />
+    <Compile Include="Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -56,10 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
+    <Content Include="..\..\..\..\..\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
       <Link>SDL.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Sprites\GoldCoin.png" />
+    <Content Include="Content\Sprites\testSpriteSheet.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

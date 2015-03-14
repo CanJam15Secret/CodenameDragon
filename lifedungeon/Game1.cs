@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using System;
+
 namespace lifedungeon
 {
     /// <summary>
@@ -9,13 +11,15 @@ namespace lifedungeon
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        Rendering rendering;
+        Random random;
 
         public Game1()
             : base()
         {
-            graphics = new GraphicsDeviceManager(this);
+            rendering = new Rendering(this, 800, 600);
+            random = new Random();
+
             Content.RootDirectory = "Content";
         }
 
@@ -27,8 +31,6 @@ namespace lifedungeon
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -38,9 +40,13 @@ namespace lifedungeon
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            rendering.spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Create a new SpriteBatch, which can be used to draw textures.
+            rendering.loadSpriteSheet(this, "Sprites/GoldCoin", new Point(32, 32));
+            //rendering.loadSpriteSheet(this, "Sprites/testSpriteSheet", new Point(32, 32));
+            rendering.loadSpriteSheet(this, "Sprites/FloorTile", new Point(32, 32));
+                
             // TODO: use this.Content to load your game content here
         }
 
@@ -60,7 +66,7 @@ namespace lifedungeon
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
@@ -74,9 +80,22 @@ namespace lifedungeon
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+            rendering.Begin();
+                // Include user-render content.
+                // Can call other systems such as lighting.
+
+            for(int i = 0; i < rendering.tileCount.X; ++i)
+            {
+                for (int j = 0; j < rendering.tileCount.Y; ++j)
+                {
+                    rendering.DrawSprite("Sprites/GoldCoin", 1, 1, new Vector2((i * rendering.tileSize.X), (j * rendering.tileSize.Y)));
+                }
+            }
+
+            rendering.End();
 
             base.Draw(gameTime);
         }
