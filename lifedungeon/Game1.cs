@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
+using System;
+
 namespace lifedungeon
 {
     /// <summary>
@@ -13,12 +15,17 @@ namespace lifedungeon
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
         Texture2D slime;
         Texture2D wall;
         Texture2D floor;
+
         Vector2 offset;
         Vector2 rand;
         Vector2 plyPos;
+
+        RNG rng;
+        Random numRand;
 
         public Game1()
             : base()
@@ -31,6 +38,14 @@ namespace lifedungeon
 
             float tileSize = 32;
             offset = new Vector2( ( 1f/2f ) * tileSize, ( 0.75f/2f ) * tileSize );
+
+            rng = RNG.Instance;
+            rng.seed = 1337;
+
+            for (int i = 0; i < 100; i++)
+            {
+                System.Console.WriteLine(rng.diceRoll(100));
+            }
 
             plyPos = new Vector2(400f, 300f);
             Content.RootDirectory = "Content";
