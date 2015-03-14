@@ -1,8 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Artemis;
+using Artemis.Attributes;
+using Artemis.Manager;
+using Artemis.System;
+
 using System;
 using System.Collections.Generic;
+
+using lifedungeon.Components;
 
 namespace lifedungeon
 {
@@ -10,29 +17,35 @@ namespace lifedungeon
     // Tilemaps
     // Lighting
     // UI
-    public class Rendering
+    [ArtemisEntitySystem(GameLoopType = GameLoopType.Draw, Layer = 0)]
+    public class Rendering : EntityComponentProcessingSystem<TransformComponent, RenderComponent>
     {
-        public Rendering(Game game, int width, int height)
+        public Rendering()
         {
             tileSize = new Point(32, 32); // Note: get this gmap
-
-            graphics = new GraphicsDeviceManager(game);
             spriteSheets = new Dictionary<String, Texture2D>();
             sprites = new Dictionary<String, List<Sprite>>();
-            //spriteBatch = new SpriteBatch(game.GraphicsDevice);
-            
-            // Resize window
-            resizeWindow(width, height);
         }
 
-        public void Begin()
+        protected override void Begin()
         {
             spriteBatch.Begin();
         }
 
-        public void End()
+        protected override void End()
         {
             spriteBatch.End();
+        }
+
+        public override void LoadContent()
+        {
+            graphics = BlackBoard.GetEntry<GraphicsDeviceManager>("graphicsDevice");
+            spriteBatch = BlackBoard.GetEntry<SpriteBatch>("spriteBatch");
+            width = BlackBoard.GetEntry<int>("windowWidth");
+            height = BlackBoard.GetEntry<int>("windowHeight");
+
+            // Resize window
+            resizeWindow(width, height);
         }
 
         public void loadSpriteSheet(Game game, System.String spriteSheetName, Point spriteSize)
@@ -54,9 +67,13 @@ namespace lifedungeon
                 }
             }
         }
-        public void DrawSprite(System.String spriteSheetName, int sprite, int frame, Vector2 position)
+
+        public override void Process(Entity entity, TransformComponent transformComponent, RenderComponent renderComponent)
         {
-            sprites[spriteSheetName][sprite - 1].Draw(ref spriteSheets, ref spriteBatch, position);
+            if (transformComponent != null && renderComponent != null)
+            {
+                sprites[renderComponent.spriteSheet][renderComponent.spriteNo - 1].Draw(ref spriteSheets, ref spriteBatch, transformComponent.position);
+            }
         }
 
         public void resizeWindow(int windowWidth, int windowHeight)
@@ -82,4 +99,5 @@ namespace lifedungeon
         private Dictionary<String, List<Sprite>> sprites;
         public SpriteBatch spriteBatch;
     }
+
 }

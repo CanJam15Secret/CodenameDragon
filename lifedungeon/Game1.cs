@@ -2,7 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using Artemis;
+using Artemis.Blackboard;
+using Artemis.System;
+
 using System;
+
+using lifedungeon.Components;
+//using lifedungeon.Systems;
 
 namespace lifedungeon
 {
@@ -11,16 +18,31 @@ namespace lifedungeon
     /// </summary>
     public class Game1 : Game
     {
-        Rendering rendering;
-        Random random;
+        EntityWorld world;
+        Random rng;
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        
 
         public Game1()
             : base()
         {
-            rendering = new Rendering(this, 800, 600);
-            random = new Random();
-
+            // Set content root direction
             Content.RootDirectory = "Content";
+
+            // Create world
+            world = new EntityWorld();
+
+            // RNG
+            rng = new Random();
+
+            // Graphics device
+            graphics = new GraphicsDeviceManager(this);
+
+            // Create test entity
+            Entity player = world.CreateEntity();
+            player.AddComponent<TransformComponent>(new TransformComponent(new Vector2(0f, 0f)));
+            player.AddComponent<RenderComponent>(new RenderComponent("Sprites/GoldCoin", 1));
         }
 
         /// <summary>
@@ -31,6 +53,18 @@ namespace lifedungeon
         /// </summary>
         protected override void Initialize()
         {
+            // Sprite batch
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            EntitySystem.BlackBoard.SetEntry("graphicsDevice", graphics);
+            EntitySystem.BlackBoard.SetEntry("spriteBatch", spriteBatch);
+            EntitySystem.BlackBoard.SetEntry("ContentManager", Content);
+            EntitySystem.BlackBoard.SetEntry("windowWidth", 800);
+            EntitySystem.BlackBoard.SetEntry("windowHeight", 600);
+            EntitySystem.BlackBoard.SetEntry("rng", rng);
+
+            world.InitializeAll(true);
+
             base.Initialize();
         }
 
@@ -40,14 +74,9 @@ namespace lifedungeon
         /// </summary>
         protected override void LoadContent()
         {
-            rendering.spriteBatch = new SpriteBatch(GraphicsDevice);
-
             // Create a new SpriteBatch, which can be used to draw textures.
-            rendering.loadSpriteSheet(this, "Sprites/GoldCoin", new Point(32, 32));
-            //rendering.loadSpriteSheet(this, "Sprites/testSpriteSheet", new Point(32, 32));
-            rendering.loadSpriteSheet(this, "Sprites/FloorTile", new Point(32, 32));
-                
-            // TODO: use this.Content to load your game content here
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/GoldCoin", new Point(32, 32));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/FloorTile", new Point(32, 32));
         }
 
         /// <summary>
@@ -69,7 +98,8 @@ namespace lifedungeon
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            // Update entity system
+            world.Update();
 
             base.Update(gameTime);
         }
@@ -82,20 +112,8 @@ namespace lifedungeon
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
-            rendering.Begin();
-                // Include user-render content.
-                // Can call other systems such as lighting.
-
-            for(int i = 0; i < rendering.tileCount.X; ++i)
-            {
-                for (int j = 0; j < rendering.tileCount.Y; ++j)
-                {
-                    rendering.DrawSprite("Sprites/GoldCoin", 1, 1, new Vector2((i * rendering.tileSize.X), (j * rendering.tileSize.Y)));
-                }
-            }
-
-            rendering.End();
+            // Draw entity system
+            world.Draw();
 
             base.Draw(gameTime);
         }

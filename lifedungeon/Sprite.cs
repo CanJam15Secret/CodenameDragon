@@ -17,7 +17,6 @@ namespace lifedungeon
         public void Draw(ref Dictionary<String, Texture2D> spriteSheets, ref SpriteBatch spriteBatch, Vector2 position)
         {
             spriteBatch.Draw(spriteSheets[spriteSheetName], position, new Rectangle(coordinates.X, coordinates.Y, coordinates.X + size.X, coordinates.Y + size.Y), Color.White);
-            int i = 0;
         }
 
         String spriteSheetName;
