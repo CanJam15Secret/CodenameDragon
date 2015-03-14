@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace lifedungeon
@@ -11,11 +13,26 @@ namespace lifedungeon
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D slime;
+        Texture2D wall;
+        Texture2D floor;
+        Vector2 offset;
+        Vector2 rand;
+        Vector2 plyPos;
 
         public Game1()
             : base()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            graphics.PreferredBackBufferWidth = 800;  // set this value to the desired width of your window
+            graphics.PreferredBackBufferHeight = 600;   // set this value to the desired height of your window
+            graphics.ApplyChanges();
+
+            float tileSize = 32;
+            offset = new Vector2( ( 1f/2f ) * tileSize, ( 0.75f/2f ) * tileSize );
+
+            plyPos = new Vector2(400f, 300f);
             Content.RootDirectory = "Content";
         }
 
@@ -38,8 +55,17 @@ namespace lifedungeon
         /// </summary>
         protected override void LoadContent()
         {
+
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(this.GraphicsDevice);
+
+            floor = Content.Load<Texture2D>("floor");
+            wall = Content.Load<Texture2D>("wall");
+            slime = Content.Load<Texture2D>("slime");
+
+
+            rand.X = new System.Random().Next(0,800-64);
+            rand.Y = new System.Random().Next(0,600-64);
 
             // TODO: use this.Content to load your game content here
         }
@@ -60,9 +86,19 @@ namespace lifedungeon
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                this.Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+                this.plyPos.Y--;
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+                this.plyPos.Y++;
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+                this.plyPos.X--;
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+                this.plyPos.X++;
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -74,9 +110,26 @@ namespace lifedungeon
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.LightGray);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin( SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+
+            for (int i = 0; i < 12; ++i)
+            {
+                for (int j = 0; j < 9; ++j)
+                {
+                    spriteBatch.Draw(floor, new Vector2(offset.X + i*64, offset.Y + j*64), null, Color.White, 0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0f);
+                    if (i == 0 || i == 11 || j == 0 || j == 8)
+                    {
+                        spriteBatch.Draw(wall, new Vector2(offset.X + i * 64, offset.Y + j * 64), null, Color.White, 0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1f);
+                    }
+                    
+                    spriteBatch.Draw(slime, new Vector2(plyPos.X - 16, plyPos.Y - 16), null, Color.White, 0f, Vector2.Zero, 2.0f, SpriteEffects.None, 1f);
+                }
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
