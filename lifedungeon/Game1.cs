@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
+<<<<<<< HEAD
 using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
@@ -23,6 +26,17 @@ namespace lifedungeon
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         
+
+        Texture2D slime;
+        Texture2D wall;
+        Texture2D floor;
+
+        Vector2 offset;
+        Vector2 rand;
+        Vector2 plyPos;
+
+        RNG rng;
+        Random numRand;
 
         public Game1()
             : base()
@@ -74,6 +88,7 @@ namespace lifedungeon
         /// </summary>
         protected override void LoadContent()
         {
+
             // Create a new SpriteBatch, which can be used to draw textures.
             world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/GoldCoin", new Point(32, 32));
             world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/FloorTile", new Point(32, 32));
@@ -95,11 +110,20 @@ namespace lifedungeon
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
-            // Update entity system
-            world.Update();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                this.Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+                this.plyPos.Y--;
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+                this.plyPos.Y++;
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+                this.plyPos.X--;
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+                this.plyPos.X++;
+            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
