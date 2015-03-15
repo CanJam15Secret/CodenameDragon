@@ -44,11 +44,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering.cs" />
+    <Compile Include="RNG.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="artemis">
-      <HintPath>Dependancies\Artemis\bin\Debug\PC\artemis.dll</HintPath>
+      <HintPath>Dependancies\artemis_CSharp\bin\Debug\PC\artemis.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\WindowsGL\OpenTK.dll</HintPath>
@@ -56,6 +58,7 @@
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="Tao.Sdl">
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\WindowsGL\Tao.Sdl.dll</HintPath>
     </Reference>

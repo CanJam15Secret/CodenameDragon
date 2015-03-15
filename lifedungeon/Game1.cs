@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-<<<<<<< HEAD
 using Artemis;
 using Artemis.Blackboard;
 using Artemis.System;
@@ -22,25 +21,17 @@ namespace lifedungeon
     public class Game1 : Game
     {
         EntityWorld world;
-        Random rng;
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        
-
-        Texture2D slime;
-        Texture2D wall;
-        Texture2D floor;
-
-        Vector2 offset;
-        Vector2 rand;
+        SpriteBatch spriteBatch;        
         Vector2 plyPos;
-
         RNG rng;
-        Random numRand;
 
         public Game1()
             : base()
         {
+            //TODO: Add auto focus on start
+            //TODO: Capture Mouse.
+
             // Set content root direction
             Content.RootDirectory = "Content";
 
@@ -48,7 +39,7 @@ namespace lifedungeon
             world = new EntityWorld();
 
             // RNG
-            rng = new Random();
+            rng = RNG.Instance;
 
             // Graphics device
             graphics = new GraphicsDeviceManager(this);
@@ -56,7 +47,8 @@ namespace lifedungeon
             // Create test entity
             Entity player = world.CreateEntity();
             player.AddComponent<TransformComponent>(new TransformComponent(new Vector2(0f, 0f)));
-            player.AddComponent<RenderComponent>(new RenderComponent("Sprites/GoldCoin", 1));
+            player.AddComponent<RenderComponent>(new RenderComponent("mage64", 1));
+            player.Tag = "player";
         }
 
         /// <summary>
@@ -88,10 +80,12 @@ namespace lifedungeon
         /// </summary>
         protected override void LoadContent()
         {
-
             // Create a new SpriteBatch, which can be used to draw textures.
-            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/GoldCoin", new Point(32, 32));
-            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "Sprites/FloorTile", new Point(32, 32));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "gold", new Point(32, 32));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "floor", new Point(64, 64));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "slime", new Point(32, 32));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "wall", new Point(64, 64));
+            world.SystemManager.GetSystem<Rendering>().loadSpriteSheet(this, "mage64", new Point(64, 64));
         }
 
         /// <summary>
@@ -115,15 +109,24 @@ namespace lifedungeon
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
+
+            // Get player position
+            Vector2 pos = world.TagManager.GetEntity("player").GetComponent<TransformComponent>().position;
+
+            // Handle input
             if (Keyboard.GetState().IsKeyDown(Keys.W))
-                this.plyPos.Y--;
+                --pos.Y;
             if (Keyboard.GetState().IsKeyDown(Keys.S))
-                this.plyPos.Y++;
+                ++pos.Y;
             if (Keyboard.GetState().IsKeyDown(Keys.A))
-                this.plyPos.X--;
+                --pos.X;
             if (Keyboard.GetState().IsKeyDown(Keys.D))
-                this.plyPos.X++;
-            // TODO: Add your update logic here
+                ++pos.X;
+            
+            // Update player position
+            world.TagManager.GetEntity("player").GetComponent<TransformComponent>().position = pos;
+
+            world.Update();
 
             base.Update(gameTime);
         }

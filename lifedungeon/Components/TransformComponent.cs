@@ -14,6 +14,6 @@ namespace lifedungeon.Components
             this.position = position;
         }
 
-        public Vector2 position { get; private set; }
+        public Vector2 position { get; set; }
     }
 }

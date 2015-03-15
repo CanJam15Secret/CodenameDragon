@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace lifedungeon
 {
-#if WINDOWS || LINUX
+#if WINDOWS
     /// <summary>
     /// The main class.
     /// </summary>
